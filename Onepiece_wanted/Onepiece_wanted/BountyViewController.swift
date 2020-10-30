@@ -8,17 +8,20 @@
 import UIKit
 
 class BountyViewController: UIViewController {
+    
+    // MVVM
+    
+    // Model
+    // - BountyInfo
+    
+    // View
+    // - ListCell
+    
+    // ViewModel
+    // - BountyViewModel
 
-    let bountyList: [(name: String, bounty: Int)] = [
-        ("brook", 33000000),
-        ("chopper", 50),
-        ("franky", 44000000),
-        ("luffy", 300000000),
-        ("nami", 16000000),
-        ("robin", 80000000),
-        ("sanji", 77000000),
-        ("zoro", 120000000)
-    ]
+    let viewModel = BountyViewModel()
+    
     @IBOutlet var bountyTableView: UITableView!
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -26,7 +29,8 @@ class BountyViewController: UIViewController {
             let detailVC = segue.destination as? DetailViewController
             
             if let index = sender as? Int {
-                detailVC?.bountyData = (name: bountyList[index].name, bounty: bountyList[index].bounty)
+                let bountyInfo = viewModel.bountyInfo(at: index)
+                detailVC?.viewModel.update(model: bountyInfo)
             }
         }
     }
@@ -40,16 +44,16 @@ class BountyViewController: UIViewController {
 
 extension BountyViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return bountyList.count
+        return viewModel.numOfBountyInfoList
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = bountyTableView.dequeueReusableCell(withIdentifier: "bountyCell", for: indexPath) as? ListCell else {
             return UITableViewCell()
         }
-        cell.imgView.image = UIImage(named: bountyList[indexPath.row].name)
-        cell.nameLabel.text = bountyList[indexPath.row].name
-        cell.bountyLabel.text = String(bountyList[indexPath.row].bounty)
+        
+        let bountyInfo = viewModel.bountyInfo(at: indexPath.row)
+        cell.update(info: bountyInfo)
         
         return cell
     }
@@ -65,4 +69,36 @@ class ListCell: UITableViewCell {
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var bountyLabel: UILabel!
     
+    func update(info: BountyInfo) {
+        imgView.image = info.image
+        nameLabel.text = info.name
+        bountyLabel.text = "\(info.bounty)"
+    }
+}
+
+// MARK: - ViewModel
+
+class BountyViewModel {
+    let bountyInfoList: [BountyInfo] = [
+        BountyInfo(name: "brook", bounty: 33000000),
+        BountyInfo(name: "chopper", bounty: 50),
+        BountyInfo(name: "franky", bounty: 44000000),
+        BountyInfo(name: "luffy", bounty: 300000000),
+        BountyInfo(name: "nami", bounty: 16000000),
+        BountyInfo(name: "robin", bounty: 80000000),
+        BountyInfo(name: "sanji", bounty: 77000000),
+        BountyInfo(name: "zoro", bounty: 120000000),
+    ]
+    
+    var sortedList: [BountyInfo] {
+        return bountyInfoList.sorted{ $0.bounty > $1.bounty }
+    }
+
+    var numOfBountyInfoList: Int {
+        return bountyInfoList.count
+    }
+    
+    func bountyInfo(at index: Int) -> BountyInfo {
+        return sortedList[index]
+    }
 }
