@@ -21,3 +21,7 @@ URLSession과 Codable을 활용한 API 네트워킹 실습입니다.
 ## [MyNetflix](https://github.com/Be-beee/fastcampus-all-in-one/tree/main/MyNetflix)
 
 AVFoundation과 iTunes API를 활용한 비디오 플레이어 애플리케이션입니다.
+
+## [Firebase101](https://github.com/Be-beee/fastcampus-all-in-one/tree/main/Firebase101)
+
+CocoaPods를 활용해 Firebase의 실시간 데이터베이스 연동 실습입니다.
